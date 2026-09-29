@@ -41,12 +41,23 @@ def author():
 
 @app.route('/cars')
 def cars():
+  search_query = request.args.get('q', '').strip()
   conn = get_db_connection()
-  cars_list = conn.execute(
-      'SELECT * FROM cars ORDER BY created_at DESC'
-  ).fetchall()
+
+  if search_query:
+    query = (
+        'SELECT * FROM cars WHERE brand LIKE ? OR model LIKE ? ORDER BY'
+        ' created_at DESC'
+    )
+    like_param = f'%{search_query}%'
+    cars_list = conn.execute(query, (like_param, like_param)).fetchall()
+  else:
+    cars_list = conn.execute(
+        'SELECT * FROM cars ORDER BY created_at DESC'
+    ).fetchall()
+
   conn.close()
-  return render_template('cars.html', cars=cars_list)
+  return render_template('cars.html', cars=cars_list, search_query=search_query)
 
 
 @app.route('/add_car', methods=['POST'])
@@ -69,6 +80,36 @@ def add_car():
   conn.commit()
   conn.close()
   return redirect(url_for('cars'))
+
+
+
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit_car(id):
+  conn = get_db_connection()
+
+  if request.method == 'POST':
+    brand = request.form['brand']
+    model = request.form['model']
+    description = request.form['description']
+    year = request.form['year']
+    image_url = request.form['image_url']
+
+    conn.execute(
+        'UPDATE cars SET brand = ?, model = ?, description = ?, year = ?, '
+        'image_url = ? WHERE id = ?',
+        (brand, model, description, year, image_url, id),
+    )
+    conn.commit()
+    conn.close()
+    return redirect(url_for('cars'))
+
+  car = conn.execute('SELECT * FROM cars WHERE id = ?', (id,)).fetchone()
+  conn.close()
+
+  if car is None:
+    return 'Автомобіль не знайдено', 404
+
+  return render_template('edit_car.html', car=car)
 
 
 @app.route('/car/<int:id>')
