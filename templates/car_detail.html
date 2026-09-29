@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ car.brand }} {{ car.model }}{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <h1>{{ car.brand }} {{ car.model }}</h1>
+    <p><strong>Рік випуску:</strong> {{ car.year if car.year else 'Не вказано' }}</p>
+    <p><strong>Дата додавання до бази:</strong> {{ car.created_at }}</p>
+    
+    <h3>Опис:</h3>
+    <p>{{ car.description if car.description else 'Опис відсутній.' }}</p>
+
+    {% if car.image_url %}
+        <div>
+            <img src="{{ car.image_url }}" alt="{{ car.brand }} {{ car.model }}" class="detail-img">
+        </div>
+    {% endif %}
+
+    <div style="margin-top: 25px;">
+        <a href="{{ url_for('cars') }}" class="btn">Назад до каталогу</a>
+    </div>
+</div>
+{% endblock %}

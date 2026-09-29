@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Головна — Каталог автомобілів{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center; padding: 40px;">
+    <p>Веб-додаток для збереження, перегляду та керування інформацією про автомобілі.</p>
+    <p>Тут ви можете додавати нові автомобілі, переглядати їх характеристики та видаляти застарілі записи.</p>
+    <a href="{{ url_for('cars') }}" class="btn" style="margin-top: 20px;">Перейти до каталогу</a>
+</div>
+{% endblock %}

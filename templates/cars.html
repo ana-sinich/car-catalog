@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Каталог автомобілів{% endblock %}
+
+{% block content %}
+<h2>Додати новий автомобіль</h2>
+<div class="form-container">
+    <form action="{{ url_for('add_car') }}" method="POST">
+        <input type="text" name="brand" placeholder="Марка (напр. BMW)" required>
+        <input type="text" name="model" placeholder="Модель (напр. M5 F90)" required>
+        <input type="number" name="year" placeholder="Рік випуску (напр. 2022)">
+        <input type="text" name="image_url" placeholder="URL зображення (напр. https://...)">
+        <textarea name="description" placeholder="Короткий опис автомобіля..." rows="3"></textarea>
+        <button type="submit" class="btn">Додати автомобіль</button>
+    </form>
+</div>
+
+<h2>Список автомобілів</h2>
+{% if cars %}
+    <div class="cars-grid">
+        {% for car in cars %}
+            <div class="car-card">
+                {% if car.image_url %}
+                    <img src="{{ car.image_url }}" alt="{{ car.brand }} {{ car.model }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/300x180?text=Немає+фото" alt="Немає фото">
+                {% endif %}
+                <div class="car-info">
+                    <h3>{{ car.brand }} {{ car.model }}</h3>
+                    <p><strong>Рік:</strong> {{ car.year if car.year else 'Не вказано' }}</p>
+                </div>
+                <div class="car-actions">
+                    <a href="{{ url_for('car_detail', id=car.id) }}" class="btn">Детальніше</a>
+                    <form action="{{ url_for('delete_car', id=car.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Ви впевнені, що хочете видалити цей автомобіль?')">Видалити</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>У каталозі поки немає жодного автомобіля. Додайте перший!</p>
+{% endif %}
+{% endblock %}
