@@ -63,9 +63,8 @@ def add_car():
 
   conn = get_db_connection()
   conn.execute(
-      'INSERT INTO cars (brand, model, description, year, image_url) VALUES (?,',
-      ' ?, ?, ?, ?)',
-      (brand, model, description, year, image_url),
+    'INSERT INTO cars (brand, model, description, year, image_url) VALUES (?, ?, ?, ?, ?)',
+    (brand, model, description, year, image_url),
   )
   conn.commit()
   conn.close()
